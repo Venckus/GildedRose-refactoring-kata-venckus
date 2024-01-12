@@ -97,4 +97,33 @@ class GildedRoseTest extends TestCase
             'quality does not decrease below 0' => [-5, 1, 0],
         ];
     }
+
+    /**
+     * @dataProvider conjuredItemsProvider
+     */
+    public function testConjuredItems(
+        int $startingSellIn,
+        int $startingQuality,
+        int $qualityAfterUpdate,
+    ): void {
+        $items = [new Item('Conjured Mana Cake', $startingSellIn, $startingQuality)];
+        $gildedRose = new GildedRose($items);
+        $gildedRose->updateQuality();
+
+        $this->assertSame($qualityAfterUpdate, $items[0]->quality);
+    }
+
+    /**
+     * @return array<string, array<int>>
+     */
+    public static function conjuredItemsProvider(): array
+    {
+        return [
+            'quality decreases by 2 when sellIn is greater than 0' => [2, 20, 18],
+            'quality decreases by 4 when sellIn is 0' => [0, 20, 16],
+            'quality does not decrease below 0' => [0, 0, 0],
+            'quality does not decrease below 0' => [-5, 2, 0],
+            'quality does not decrease below 0' => [-5, 1, 0],
+        ];
+    }
 }

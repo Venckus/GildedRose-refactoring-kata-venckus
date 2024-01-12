@@ -35,16 +35,17 @@ final class GildedRose
                 continue;
             }
 
-            $item->sellIn--;
-
             if ($item->quality <= 0) {
                 continue;
             }
 
-            if ($item->sellIn < 0 && $item->quality >= 2) {
-                $item->quality -= 2;
+            $item->sellIn--;
+            $conjuredMultiplier = str_contains($item->name, 'Conjured') ? 2 : 1;
+
+            if ($item->sellIn < 0 && $item->quality >= 2 * $conjuredMultiplier) {
+                $item->quality -= 2 * $conjuredMultiplier;
             } else {
-                $item->quality--;
+                $item->quality = max(0, $item->quality - 1 * $conjuredMultiplier);
             }
         }
     }
