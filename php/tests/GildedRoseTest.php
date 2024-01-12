@@ -23,6 +23,9 @@ class GildedRoseTest extends TestCase
         $this->assertSame(1, $items[0]->sellIn);
     }
 
+    /**
+     * @return array<string, array<int>>
+     */
     public static function agedBrieProvider(): array
     {
         return [
@@ -53,6 +56,9 @@ class GildedRoseTest extends TestCase
         $this->assertSame($qualityAfterUpdate, $items[0]->quality);
     }
 
+    /**
+     * @return array<string, array<int>>
+     */
     public static function backstagePassesProvider(): array
     {
         return [
@@ -78,12 +84,17 @@ class GildedRoseTest extends TestCase
         $this->assertSame($qualityAfterUpdate, $items[0]->quality);
     }
 
+    /**
+     * @return array<string, array<int>>
+     */
     public static function otherItemsProvider(): array
     {
         return [
             'quality decreases by 1 when sellIn is greater than 0' => [2, 20, 19],
             'quality decreases by 2 when sellIn is 0' => [0, 20, 18],
             'quality does not decrease below 0' => [0, 0, 0],
+            'quality does not decrease below 0' => [-5, 2, 0],
+            'quality does not decrease below 0' => [-5, 1, 0],
         ];
     }
 }
