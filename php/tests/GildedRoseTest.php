@@ -47,9 +47,16 @@ class GildedRoseTest extends TestCase
     /**
      * @dataProvider backstagePassesProvider
      */
-    public function testBackstagePasses(int $startingSellIn, int $qualityAfterUpdate): void
-    {
-        $items = [new Item('Backstage passes to a TAFKAL80ETC concert', $startingSellIn, 20)];
+    public function testBackstagePasses(
+        int $startingSellIn,
+        int $startingQuality,
+        int $qualityAfterUpdate
+    ): void {
+        $items = [new Item(
+            'Backstage passes to a TAFKAL80ETC concert',
+            $startingSellIn,
+            $startingQuality
+        )];
         $gildedRose = new GildedRose($items);
         $gildedRose->updateQuality();
 
@@ -62,10 +69,11 @@ class GildedRoseTest extends TestCase
     public static function backstagePassesProvider(): array
     {
         return [
-            'quality increases by 1 when sellIn is greater than 10' => [15, 21],
-            'quality increases by 2 when sellIn is between 10 and 6' => [10, 22],
-            'quality increases by 3 when sellIn is between 5 and 1' => [5, 23],
-            'quality drops to 0 when sellIn is 0' => [0, 0],
+            'quality increases by 1 when sellIn is greater than 10' => [15, 20, 21],
+            'quality increases by 2 when sellIn is between 10 and 6' => [10, 20, 22],
+            'quality increases by 3 when sellIn is between 5 and 1' => [5, 20, 23],
+            'quality does not increase over 50' => [9, 50, 50],
+            'quality drops to 0 when sellIn is 0' => [0, 20, 0],
         ];
     }
 

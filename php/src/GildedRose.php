@@ -25,8 +25,10 @@ final class GildedRose
                 continue;
             }
 
+            $item->sellIn--;
+
             if ($item->name === self::AGED_BRIE) {
-                $this->updateBrie($item);
+                $this->increaseItemQuality($item, 1);
                 continue;
             }
 
@@ -39,45 +41,50 @@ final class GildedRose
                 continue;
             }
 
-            $item->sellIn--;
-            $conjuredMultiplier = str_contains($item->name, 'Conjured') ? 2 : 1;
-
-            if ($item->sellIn < 0 && $item->quality >= 2 * $conjuredMultiplier) {
-                $item->quality -= 2 * $conjuredMultiplier;
-            } else {
-                $item->quality = max(0, $item->quality - 1 * $conjuredMultiplier);
+            if (str_contains($item->name, 'Conjured')) {
+                $this->decreaseItemQuality($item, 2);
+                continue;
             }
+
+            $this->decreaseItemQuality($item, 1);
         }
+    }
+
+    private function decreaseItemQuality(Item $item, int $updateMultiplier): void
+    {
+        $minQuality = 2 * $updateMultiplier;
+
+        if ($item->sellIn < 0 && $item->quality >= $minQuality) {
+            $item->quality -= $minQuality;
+            return;
+        }
+
+        $item->quality = max(0, $item->quality - $updateMultiplier);
+    }
+
+    private function increaseItemQuality(Item $item, int $multiplier): void
+    {
+        $item->quality = min(50, $item->quality + $multiplier);
     }
 
 
     private function updateBackstagePasses(Item $item): void
     {
-        $item->sellIn--;
-
         if ($item->sellIn <= 0) {
             $item->quality = 0;
             return;
         }
-        
+
         if ($item->sellIn <= 5) {
-            $item->quality += 3;
+            $this->increaseItemQuality($item, 3);
             return;
         }
         
         if ($item->sellIn <= 10) {
-            $item->quality += 2;
+            $this->increaseItemQuality($item, 2);
             return;
         }
 
         $item->quality++;
-    }
-
-    private function updateBrie(Item $item): void
-    {
-        if ($item->quality < 50) {
-            $item->quality++;
-        }
-        $item->sellIn--;
     }
 }
